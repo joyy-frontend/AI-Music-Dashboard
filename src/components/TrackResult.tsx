@@ -1,15 +1,10 @@
 import WaveformPreview from './WaveformPreview';
+import type { GeneratedTrack, GenerationStatus } from '../types/music';
 
-export type Track = {
-  title: string;
-  duration: string;
-  audioUrl: string;
-  genre: string;
-  mood: string;
-};
+export type Track = GeneratedTrack;
 
 type TrackResultProps = {
-  status: 'idle' | 'loading' | 'success' | 'error';
+  status: GenerationStatus;
   errorMessage: string | null;
   track: Track | null;
 };
@@ -63,11 +58,7 @@ export default function TrackResult({
         <span>{track.duration}</span>
       </div>
 
-      <WaveformPreview />
-
-      <audio controls src={track.audioUrl}>
-        <track kind="captions" />
-      </audio>
+      <WaveformPreview audioUrl={track.audioUrl} />
     </section>
   );
 }

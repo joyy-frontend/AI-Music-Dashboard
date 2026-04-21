@@ -1,38 +1,8 @@
 import { useState } from 'react';
+import { generateTrack } from './api/musicApi';
 import PromptForm, { GenerationRequest } from './components/PromptForm';
 import TrackResult, { Track } from './components/TrackResult';
-
-type GenerationStatus = 'idle' | 'loading' | 'success' | 'error';
-
-const silentAudio =
-  'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQQAAAAAAA==';
-
-function createMockTrack(request: GenerationRequest): Promise<Track> {
-  const promptSeed = request.prompt
-    .trim()
-    .split(/\s+/)
-    .slice(0, 4)
-    .join(' ');
-
-  const titleBase = promptSeed || `${request.mood} ${request.genre}`;
-
-  return new Promise((resolve, reject) => {
-    window.setTimeout(() => {
-      if (request.prompt.toLowerCase().includes('error')) {
-        reject(new Error('Mock generation failed. Please try another prompt.'));
-        return;
-      }
-
-      resolve({
-        title: `${titleBase} Sketch`,
-        duration: '2:48',
-        audioUrl: silentAudio,
-        genre: request.genre,
-        mood: request.mood,
-      });
-    }, 1500);
-  });
-}
+import type { GenerationStatus } from './types/music';
 
 export default function App() {
   const [track, setTrack] = useState<Track | null>(null);
@@ -44,7 +14,7 @@ export default function App() {
     setErrorMessage(null);
 
     try {
-      const generatedTrack = await createMockTrack(request);
+      const generatedTrack = await generateTrack(request);
       setTrack(generatedTrack);
       setStatus('success');
     } catch (error) {

@@ -1,10 +1,7 @@
 import { FormEvent, useState } from 'react';
+import type { GenerateTrackInput } from '../types/music';
 
-export type GenerationRequest = {
-  prompt: string;
-  genre: string;
-  mood: string;
-};
+export type GenerationRequest = GenerateTrackInput;
 
 type PromptFormProps = {
   isGenerating: boolean;
