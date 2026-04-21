@@ -1,16 +1,22 @@
 import WaveformPreview from './WaveformPreview';
-import type { GeneratedTrack, GenerationStatus } from '../types/music';
+import type {
+  AudioAnalysisSample,
+  GeneratedTrack,
+  GenerationStatus,
+} from '../types/music';
 
 export type Track = GeneratedTrack;
 
 type TrackResultProps = {
   status: GenerationStatus;
   errorMessage: string | null;
+  onAnalysisSample?: (sample: AudioAnalysisSample) => void;
   track: Track | null;
 };
 
 export default function TrackResult({
   errorMessage,
+  onAnalysisSample,
   status,
   track,
 }: TrackResultProps) {
@@ -58,7 +64,10 @@ export default function TrackResult({
         <span>{track.duration}</span>
       </div>
 
-      <WaveformPreview audioUrl={track.audioUrl} />
+      <WaveformPreview
+        audioUrl={track.audioUrl}
+        onAnalysisSample={onAnalysisSample}
+      />
     </section>
   );
 }

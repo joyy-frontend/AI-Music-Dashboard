@@ -13,3 +13,15 @@ export type GeneratedTrack = {
 };
 
 export type GenerationStatus = 'idle' | 'loading' | 'success' | 'error';
+
+export type AudioAnalysisSample = {
+  time: number;
+  averageEnergy: number;
+  peakLevel: number;
+  intensity: number;
+};
+
+export type GenerationHistoryItem = GeneratedTrack & {
+  id: string;
+  createdAt: string;
+};

@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import { useAudioAnalysis } from '../hooks/useAudioAnalysis';
+import type { AudioAnalysisSample } from '../types/music';
 
 type WaveformPreviewProps = {
   audioUrl?: string;
   isLoading?: boolean;
+  onAnalysisSample?: (sample: AudioAnalysisSample) => void;
 };
 
 function formatTime(seconds: number) {
@@ -23,6 +25,7 @@ function formatTime(seconds: number) {
 export default function WaveformPreview({
   audioUrl,
   isLoading = false,
+  onAnalysisSample,
 }: WaveformPreviewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const waveSurferRef = useRef<WaveSurfer | null>(null);
@@ -38,6 +41,19 @@ export default function WaveformPreview({
     mediaElement,
     isPlaying,
   );
+
+  useEffect(() => {
+    if (analysisStatus !== 'analyzing') {
+      return;
+    }
+
+    onAnalysisSample?.({
+      time: waveSurferRef.current?.getCurrentTime() ?? currentTime,
+      averageEnergy: metrics.averageEnergy,
+      peakLevel: metrics.peakLevel,
+      intensity: metrics.intensity,
+    });
+  }, [analysisStatus, currentTime, metrics, onAnalysisSample]);
 
   useEffect(() => {
     setCurrentTime(0);
