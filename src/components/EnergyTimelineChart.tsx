@@ -153,7 +153,7 @@ export default function EnergyTimelineChart({
         <div ref={chartRef} className="chart-surface" />
       ) : (
         <div className="chart-empty">
-          Play a generated track to start collecting audio analysis data.
+          Generate and play a track to collect live energy and intensity data.
         </div>
       )}
     </section>

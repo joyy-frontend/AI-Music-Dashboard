@@ -22,6 +22,22 @@ function formatTime(seconds: number) {
   return `${minutes}:${remainingSeconds}`;
 }
 
+function getAnalysisStatusMessage(status: string) {
+  if (status === 'analyzing') {
+    return 'Reading the live playback signal.';
+  }
+
+  if (status === 'error') {
+    return 'Audio analysis is unavailable for this source.';
+  }
+
+  if (status === 'unavailable') {
+    return 'Play a generated track to enable analysis.';
+  }
+
+  return 'Analysis updates while audio is playing.';
+}
+
 export default function WaveformPreview({
   audioUrl,
   isLoading = false,
@@ -180,6 +196,9 @@ export default function WaveformPreview({
               <p className="eyebrow">Audio analysis</p>
               <span>{analysisStatus}</span>
             </div>
+            <p className="analysis-status-message">
+              {getAnalysisStatusMessage(analysisStatus)}
+            </p>
             <div className="analysis-grid">
               <div className="analysis-metric">
                 <strong>{metrics.averageEnergy}%</strong>
@@ -201,7 +220,9 @@ export default function WaveformPreview({
         </>
       ) : (
         <p className="waveform-status">
-          {isLoading ? 'Preparing audio preview...' : 'No audio loaded yet.'}
+          {isLoading
+            ? 'Preparing waveform and playback controls...'
+            : 'No audio loaded yet. Generate a track to preview playback.'}
         </p>
       )}
     </div>

@@ -97,7 +97,7 @@ export default function GenerationHistoryChart({
         <div ref={chartRef} className="chart-surface" />
       ) : (
         <div className="chart-empty">
-          Generate a few tracks to compare duration, genre, and mood.
+          Metadata comparison appears after your first successful generation.
         </div>
       )}
     </section>

@@ -140,6 +140,43 @@ select:focus {
   margin: 18px 0;
 }
 
+.preset-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.preset-button {
+  min-height: 38px;
+  border: 1px solid #cfd8e3;
+  background: #fbfdff;
+  color: #344054;
+  padding: 0 10px;
+  font-size: 0.86rem;
+}
+
+.preset-button:hover:not(:disabled) {
+  border-color: #2d6cdf;
+  background: #e8f0ff;
+  color: #1849a9;
+  transform: translateY(-1px);
+}
+
+.preset-button:active:not(:disabled) {
+  border-color: #1849a9;
+  background: #d7e5ff;
+  color: #111827;
+  transform: translateY(0);
+}
+
+.preset-button.is-selected,
+.preset-button.is-selected:hover:not(:disabled) {
+  border-color: #2d6cdf;
+  background: #2d6cdf;
+  color: #ffffff;
+}
+
 button {
   width: 100%;
   min-height: 48px;
@@ -164,6 +201,13 @@ button:disabled {
   opacity: 0.72;
 }
 
+.form-status {
+  margin: 12px 0 0;
+  color: #5b6472;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
 .result-panel {
   display: flex;
   min-height: 100%;
@@ -180,8 +224,31 @@ button:disabled {
 
 .track-header p,
 .empty-state h2,
+.empty-state p,
 .error-state p {
   color: #5b6472;
+}
+
+.status-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: #5b6472;
+}
+
+.status-row p {
+  margin-bottom: 0;
+  font-weight: 700;
+}
+
+.loading-spinner {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  border: 3px solid #d7e5ff;
+  border-top-color: #2d6cdf;
+  border-radius: 999px;
+  animation: spin 700ms linear infinite;
 }
 
 .error-state {
@@ -193,6 +260,10 @@ button:disabled {
   color: #b42318;
 }
 
+.retry-action {
+  margin: 12px 0 4px;
+}
+
 .track-header span {
   border-radius: 999px;
   background: #e8f0ff;
@@ -200,6 +271,26 @@ button:disabled {
   padding: 8px 12px;
   font-size: 0.9rem;
   font-weight: 800;
+}
+
+.track-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.secondary-action {
+  min-height: 42px;
+  border: 1px solid #cfd8e3;
+  background: #fbfdff;
+  color: #344054;
+}
+
+.secondary-action:hover:not(:disabled) {
+  border-color: #2d6cdf;
+  background: #e8f0ff;
+  color: #1849a9;
 }
 
 .waveform-player {
@@ -303,6 +394,13 @@ button:disabled {
   text-transform: capitalize;
 }
 
+.analysis-status-message {
+  margin: -4px 0 12px;
+  color: #5b6472;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
 .analysis-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -342,6 +440,97 @@ button:disabled {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
   gap: 20px;
+}
+
+.history-panel {
+  margin-bottom: 20px;
+  padding: 22px;
+}
+
+.history-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.history-item {
+  min-height: 0;
+  border: 1px solid #dde5f0;
+  background: #fbfdff;
+  color: #18212f;
+  padding: 12px;
+  text-align: left;
+}
+
+.history-item:hover:not(:disabled) {
+  border-color: #2d6cdf;
+  background: #e8f0ff;
+  color: #1849a9;
+  transform: translateY(-1px);
+}
+
+.history-item:active:not(:disabled) {
+  border-color: #1849a9;
+  background: #d7e5ff;
+  color: #111827;
+  transform: translateY(0);
+}
+
+.history-item.is-selected,
+.history-item.is-selected:hover:not(:disabled) {
+  border-color: #2d6cdf;
+  background: #f4f8ff;
+  color: #111827;
+  box-shadow: 0 0 0 3px rgba(45, 108, 223, 0.12);
+}
+
+.history-title,
+.history-badge,
+.history-prompt,
+.history-meta,
+.history-parent {
+  display: block;
+}
+
+.history-title {
+  font-weight: 800;
+}
+
+.history-badge {
+  width: fit-content;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: #e8f0ff;
+  color: #1849a9;
+  padding: 4px 8px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.history-prompt {
+  margin-top: 6px;
+  color: #5b6472;
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.history-meta {
+  margin-top: 8px;
+  color: #2d6cdf;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.history-parent {
+  margin-top: 6px;
+  color: #5b6472;
+  font-size: 0.76rem;
+}
+
+.history-empty {
+  margin-bottom: 0;
+  color: #5b6472;
 }
 
 .chart-card {
@@ -389,6 +578,12 @@ button:disabled {
   }
 }
 
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (max-width: 760px) {
   .app-shell {
     width: min(100% - 24px, 1120px);
@@ -396,7 +591,9 @@ button:disabled {
   }
 
   .dashboard,
+  .history-list,
   .visual-dashboard,
+  .preset-list,
   .select-grid {
     grid-template-columns: 1fr;
   }
@@ -408,6 +605,10 @@ button:disabled {
 
   .track-header {
     flex-direction: column;
+  }
+
+  .track-actions {
+    grid-template-columns: 1fr;
   }
 
   .analysis-grid {

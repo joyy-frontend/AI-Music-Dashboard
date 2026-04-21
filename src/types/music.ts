@@ -21,7 +21,13 @@ export type AudioAnalysisSample = {
   intensity: number;
 };
 
+export type GenerationKind = 'original' | 'regenerated' | 'variation';
+
 export type GenerationHistoryItem = GeneratedTrack & {
   id: string;
   createdAt: string;
+  generationType: GenerationKind;
+  parentId?: string;
+  parentTitle?: string;
+  prompt: string;
 };
