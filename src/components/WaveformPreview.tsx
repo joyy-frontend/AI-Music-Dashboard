@@ -1,10 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
 import WaveSurfer from 'wavesurfer.js';
+import { useAudioAnalysis } from '../hooks/useAudioAnalysis';
 
 type WaveformPreviewProps = {
   audioUrl?: string;
   isLoading?: boolean;
 };
+
+function formatTime(seconds: number) {
+  if (!Number.isFinite(seconds) || seconds <= 0) {
+    return '0:00';
+  }
+
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60)
+    .toString()
+    .padStart(2, '0');
+
+  return `${minutes}:${remainingSeconds}`;
+}
 
 export default function WaveformPreview({
   audioUrl,
@@ -14,14 +28,28 @@ export default function WaveformPreview({
   const waveSurferRef = useRef<WaveSurfer | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [mediaElement, setMediaElement] = useState<HTMLMediaElement | null>(
+    null,
+  );
+  const { metrics, status: analysisStatus } = useAudioAnalysis(
+    mediaElement,
+    isPlaying,
+  );
 
   useEffect(() => {
+    setCurrentTime(0);
+    setDuration(0);
+    setIsReady(false);
+    setIsPlaying(false);
+    setLoadError(null);
+    setMediaElement(null);
+
     if (!audioUrl || !containerRef.current) {
       return undefined;
     }
-
-    setIsReady(false);
-    setIsPlaying(false);
 
     const waveSurfer = WaveSurfer.create({
       barGap: 3,
@@ -29,7 +57,9 @@ export default function WaveformPreview({
       barWidth: 4,
       container: containerRef.current,
       cursorColor: '#111827',
+      dragToSeek: true,
       height: 96,
+      normalize: true,
       progressColor: '#24b8a6',
       url: audioUrl,
       waveColor: '#2d6cdf',
@@ -37,7 +67,9 @@ export default function WaveformPreview({
 
     waveSurferRef.current = waveSurfer;
 
-    waveSurfer.on('ready', () => {
+    waveSurfer.on('ready', (loadedDuration) => {
+      setDuration(loadedDuration || waveSurfer.getDuration());
+      setMediaElement(waveSurfer.getMediaElement());
       setIsReady(true);
     });
     waveSurfer.on('play', () => {
@@ -46,14 +78,28 @@ export default function WaveformPreview({
     waveSurfer.on('pause', () => {
       setIsPlaying(false);
     });
+    waveSurfer.on('timeupdate', (time) => {
+      setCurrentTime(time);
+    });
+    waveSurfer.on('seeking', (time) => {
+      setCurrentTime(time);
+    });
     waveSurfer.on('finish', () => {
       setIsPlaying(false);
+      setCurrentTime(0);
       waveSurfer.seekTo(0);
+    });
+    waveSurfer.on('error', () => {
+      setLoadError('Audio could not be loaded.');
+      setIsReady(false);
+      setIsPlaying(false);
+      setMediaElement(null);
     });
 
     return () => {
       waveSurfer.destroy();
       waveSurferRef.current = null;
+      setMediaElement(null);
     };
   }, [audioUrl]);
 
@@ -62,14 +108,26 @@ export default function WaveformPreview({
   };
 
   const showPlayer = Boolean(audioUrl);
+  const playerStatus = loadError
+    ? 'unavailable'
+    : isLoading
+      ? 'loading'
+      : showPlayer
+        ? 'ready'
+        : 'empty';
 
   return (
-    <div className="waveform-player">
+    <div
+      className={`waveform-player ${isPlaying ? 'is-playing' : ''}`}
+      data-status={playerStatus}
+    >
       <div
-        className={`waveform ${isLoading ? 'is-loading' : ''}`}
+        className={`waveform ${isLoading ? 'is-loading' : ''} ${
+          loadError ? 'has-error' : ''
+        }`}
         aria-label="Waveform preview"
       >
-        {showPlayer ? (
+        {showPlayer && !loadError ? (
           <div ref={containerRef} className="waveform-canvas" />
         ) : (
           <div className="waveform-empty" aria-hidden="true" />
@@ -77,16 +135,59 @@ export default function WaveformPreview({
       </div>
 
       {showPlayer ? (
-        <button
-          className="playback-button"
-          type="button"
-          onClick={handlePlayPause}
-          disabled={!isReady}
-          aria-label={isPlaying ? 'Pause track' : 'Play track'}
-        >
-          <span aria-hidden="true">{isPlaying ? 'Pause' : 'Play'}</span>
-        </button>
-      ) : null}
+        <>
+          <div className="playback-controls">
+            <button
+              className="playback-button"
+              type="button"
+              onClick={handlePlayPause}
+              disabled={!isReady || Boolean(loadError)}
+              aria-label={isPlaying ? 'Pause track' : 'Play track'}
+            >
+              <span aria-hidden="true">{isPlaying ? 'Pause' : 'Play'}</span>
+            </button>
+
+            <div className="playback-meta" aria-live="polite">
+              {loadError ? (
+                <span>{loadError}</span>
+              ) : (
+                <span>
+                  {isReady ? formatTime(currentTime) : 'Loading'} /{' '}
+                  {isReady ? formatTime(duration) : '--:--'}
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="analysis-panel" aria-live="polite">
+            <div className="analysis-header">
+              <p className="eyebrow">Audio analysis</p>
+              <span>{analysisStatus}</span>
+            </div>
+            <div className="analysis-grid">
+              <div className="analysis-metric">
+                <strong>{metrics.averageEnergy}%</strong>
+                <span>Average energy</span>
+                <p>Overall loudness across the current audio frame.</p>
+              </div>
+              <div className="analysis-metric">
+                <strong>{metrics.peakLevel}%</strong>
+                <span>Peak level</span>
+                <p>Highest momentary amplitude detected right now.</p>
+              </div>
+              <div className="analysis-metric">
+                <strong>{metrics.intensity}%</strong>
+                <span>Intensity</span>
+                <p>Combined energy and peak signal for perceived drive.</p>
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <p className="waveform-status">
+          {isLoading ? 'Preparing audio preview...' : 'No audio loaded yet.'}
+        </p>
+      )}
     </div>
   );
 }

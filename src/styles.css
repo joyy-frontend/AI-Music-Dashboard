@@ -205,13 +205,22 @@ button:disabled {
   margin: 26px 0;
 }
 
+.waveform-player.is-playing .waveform {
+  border-color: rgba(36, 184, 166, 0.42);
+  box-shadow: 0 0 0 3px rgba(36, 184, 166, 0.12);
+}
+
 .waveform {
   display: flex;
   height: 132px;
   align-items: center;
+  border: 1px solid transparent;
   border-radius: 8px;
   background: #eef4fb;
   padding: 18px;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .waveform-canvas,
@@ -235,12 +244,97 @@ button:disabled {
   animation: pulse 850ms ease-in-out infinite alternate;
 }
 
+.waveform.has-error {
+  background: #fff4f4;
+}
+
+.playback-controls {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+}
+
 .playback-button {
   width: auto;
   min-width: 112px;
   min-height: 42px;
-  margin-top: 14px;
   padding: 0 18px;
+}
+
+.playback-meta,
+.waveform-status {
+  color: #5b6472;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.waveform-status {
+  margin: 12px 0 0;
+}
+
+.analysis-panel {
+  margin-top: 18px;
+  border-top: 1px solid #dde5f0;
+  padding-top: 18px;
+}
+
+.analysis-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.analysis-header .eyebrow {
+  margin: 0;
+}
+
+.analysis-header span {
+  border-radius: 999px;
+  background: #eef4fb;
+  color: #5b6472;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.analysis-metric {
+  border: 1px solid #dde5f0;
+  border-radius: 8px;
+  background: #fbfdff;
+  padding: 12px;
+}
+
+.analysis-metric strong {
+  display: block;
+  color: #111827;
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.analysis-metric span {
+  display: block;
+  margin-top: 8px;
+  color: #344054;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.analysis-metric p {
+  margin: 6px 0 0;
+  color: #5b6472;
+  font-size: 0.8rem;
+  line-height: 1.35;
 }
 
 @keyframes pulse {
@@ -273,5 +367,9 @@ button:disabled {
 
   .track-header {
     flex-direction: column;
+  }
+
+  .analysis-grid {
+    grid-template-columns: 1fr;
   }
 }
