@@ -2,7 +2,7 @@ import { createServer } from 'node:http';
 import {
   handleGenerateTrackRoute,
   sendRouteJson,
-} from './routes/generateTrackRoute';
+} from './routes/generateTrackRoute.js';
 
 const port = Number(process.env.API_PORT ?? 3001);
 

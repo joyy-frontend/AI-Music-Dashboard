@@ -1,5 +1,5 @@
-import type { GenerateTrackInput } from '../../src/types/music';
-import type { MusicProvider } from './types';
+import type { GenerateTrackInput } from '../../src/types/music.js';
+import type { MusicProvider } from './types.js';
 
 type MockAudioPreset = {
   duration: string;

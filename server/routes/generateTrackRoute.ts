@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { getMusicProvider } from '../providers/providerFactory';
-import type { GenerateTrackInput } from '../../src/types/music';
+import { getMusicProvider } from '../providers/providerFactory.js';
+import type { GenerateTrackInput } from '../../src/types/music.js';
 
 function sendJson(
   response: ServerResponse,

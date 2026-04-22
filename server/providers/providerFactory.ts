@@ -1,7 +1,7 @@
-import { musicGenProvider } from './musicGenProvider';
-import { mockProvider } from './mockProvider';
-import { openAiProvider } from './openAiProvider';
-import type { MusicProvider, MusicProviderName } from './types';
+import { musicGenProvider } from './musicGenProvider.js';
+import { mockProvider } from './mockProvider.js';
+import { openAiProvider } from './openAiProvider.js';
+import type { MusicProvider, MusicProviderName } from './types.js';
 
 function isMusicProviderName(value: string): value is MusicProviderName {
   return value === 'mock' || value === 'openai' || value === 'musicgen';

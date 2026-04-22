@@ -1,4 +1,4 @@
-import type { GeneratedTrack, GenerateTrackInput } from '../../src/types/music';
+import type { GeneratedTrack, GenerateTrackInput } from '../../src/types/music.js';
 
 export type MusicProviderName = 'mock' | 'openai' | 'musicgen';
 

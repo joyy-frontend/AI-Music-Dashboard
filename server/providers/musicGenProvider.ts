@@ -1,4 +1,4 @@
-import type { MusicProvider } from './types';
+import type { MusicProvider } from './types.js';
 
 export const musicGenProvider: MusicProvider = {
   name: 'musicgen',

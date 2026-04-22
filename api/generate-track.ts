@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import {
   handleGenerateTrackRoute,
   sendRouteJson,
-} from '../server/routes/generateTrackRoute';
+} from '../server/routes/generateTrackRoute.js';
 
 export default async function handler(
   request: IncomingMessage,
