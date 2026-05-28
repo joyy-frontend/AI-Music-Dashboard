@@ -1,12 +1,12 @@
 # AI Music Generation Dashboard
 
-A React + TypeScript dashboard that turns music prompts into mock generated tracks, then visualizes playback, waveform interaction, and live audio analysis.
+A React + TypeScript dashboard that turns music prompts into 30-second AI-generated tracks, then visualizes playback, waveform interaction, and live audio analysis.
 
 ## Project Overview
 
-AI Music Generation Dashboard is a one-page MVP for exploring what an AI music product interface could feel like. A user can write a prompt, choose a genre and mood, generate a track through a local backend API, play the result, inspect a waveform, and watch live audio metrics update while the track is playing.
+AI Music Generation Dashboard is a one-page MVP for exploring what an AI music product interface could feel like. A user can write a prompt, choose a genre and mood, generate a 30-second track through a local backend API, play the result, inspect a waveform, and watch live audio metrics update while the track is playing.
 
-The current app uses a mock provider and generated WAV data instead of a real AI music model. The client-server boundary, shared TypeScript types, and provider interface are intentionally structured so the mock layer can later be replaced with an OpenAI audio workflow, MusicGen-style service, or another music generation provider.
+The current app uses MusicGen through Replicate for text-to-music generation. The client-server boundary, shared TypeScript types, and provider interface keep the frontend insulated from provider details so the backend can evolve later without rewriting the main UI flow.
 
 ## Why I Built This
 
@@ -18,8 +18,9 @@ For a portfolio context, the project is meant to show how I think about creative
 
 - Prompt-based track generation form with genre and mood controls
 - Four prompt presets for fast creative starting points
-- Local mock backend API with a provider abstraction layer
-- Mock audio generation that varies by prompt, genre, and mood
+- Local backend API with a provider abstraction layer
+- MusicGen text-to-music generation through Replicate
+- 30-second WAV output with automatic polling on long generations
 - Regenerate and Generate Variation actions
 - Generation history with original, regenerated, and variation labels
 - localStorage persistence for recent generation history
@@ -52,14 +53,14 @@ User prompt / preset
   -> POST /api/generate-track
   -> server/routes/generateTrackRoute.ts
   -> server/providers/providerFactory.ts
-  -> mockProvider
+  -> musicGenProvider
   -> GeneratedTrack response
   -> TrackResult
   -> WaveformPreview + Web Audio analysis
   -> DashboardVisuals + GenerationHistory
 ```
 
-The frontend owns interaction state, playback UI, charts, history selection, and error/loading presentation. The backend owns request validation, provider selection, and track generation. The provider contract lives in `server/providers/types.ts`, which keeps the current mock provider aligned with future real providers.
+The frontend owns interaction state, playback UI, charts, history selection, and error/loading presentation. The backend owns request validation, provider selection, and track generation. The provider contract lives in `server/providers/types.ts`, which keeps the current MusicGen integration aligned with future real providers.
 
 ## Local Setup
 
@@ -75,7 +76,7 @@ Create a local environment file:
 cp .env.example .env
 ```
 
-Start the mock API server:
+Add your Replicate token to `.env`, then start the API server:
 
 ```bash
 npm run dev:server
@@ -108,13 +109,14 @@ npm test
 Use `.env.example` as the starting point:
 
 ```env
-MUSIC_PROVIDER=mock
+MUSIC_PROVIDER=musicgen
 API_PORT=3001
 OPENAI_API_KEY=
-MUSICGEN_API_KEY=
+REPLICATE_API_TOKEN=
+MUSICGEN_MODEL_VERSION=large
 ```
 
-`MUSIC_PROVIDER=mock` is the current supported runtime path. `OPENAI_API_KEY` and `MUSICGEN_API_KEY` are reserved for future provider integrations and should stay on the backend side, never in frontend code.
+`MUSIC_PROVIDER=musicgen` is now the default runtime path. `REPLICATE_API_TOKEN` is required on the backend for MusicGen generation, and `MUSICGEN_MODEL_VERSION` defaults to `large`.
 
 ## Project Structure
 
@@ -125,9 +127,9 @@ server/
   providers/
     types.ts                     # Shared provider contract
     providerFactory.ts           # Provider selection from env
-    mockProvider.ts              # Current mock generation provider
+    mockProvider.ts              # Local mock generation fallback
     openAiProvider.ts            # Placeholder for future OpenAI provider
-    musicGenProvider.ts          # Placeholder for future MusicGen provider
+    musicGenProvider.ts          # Replicate-backed MusicGen provider
 
 src/
   api/musicApi.ts                # Frontend fetch client
@@ -150,7 +152,7 @@ src/
 ## Implementation Considerations
 
 - Kept the current UI as a single-screen MVP, but separated form, player, chart, and history responsibilities into focused components.
-- Used a backend route and provider interface so the frontend does not depend on mock generation details.
+- Used a backend route and provider interface so the frontend does not depend on MusicGen or Replicate specifics.
 - Kept API keys out of the frontend path and modeled real provider integration as a backend concern.
 - Added explicit idle, loading, success, and error states so generation failures do not collapse the whole app.
 - Built the audio experience around playback interaction: waveform seek, current time, duration, play state, and cleanup when tracks change.
@@ -159,16 +161,15 @@ src/
 
 ## Current Limitations
 
-- The app does not call a real AI music generation API yet.
-- Audio is generated locally by the mock provider as short WAV data URLs.
-- The OpenAI and MusicGen providers are placeholders, not production implementations.
+- Music generation depends on an external Replicate API token and network access.
+- MusicGen generations can take noticeable time, especially for 30-second outputs.
+- The OpenAI provider is still a placeholder.
 - Generation history is stored in localStorage only.
 - The backend is a lightweight local Node server, not a production API service.
 - Live analysis is based on browser playback data, not deeper offline audio feature extraction.
 
 ## Future Improvements
 
-- Implement a real OpenAI audio workflow or external music generation provider.
 - Add async generation jobs with progress, cancellation, and retry behavior.
 - Support reference audio upload for variation or style transfer workflows.
 - Add richer audio analysis such as tempo, spectral centroid, dynamic range, or section detection.
@@ -178,4 +179,4 @@ src/
 
 ## Provider Status
 
-This project currently runs on a mock provider and mock data by design. The important architectural piece is that the frontend, backend route, shared types, and provider interface are already separated, so a real provider can be integrated as a future extension without rewriting the main UI flow.
+This project now runs on a MusicGen provider backed by Replicate. The important architectural piece is still the same: the frontend, backend route, shared types, and provider interface remain separated, so the generation backend can keep evolving without rewriting the main UI flow.

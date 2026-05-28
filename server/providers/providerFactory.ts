@@ -8,7 +8,7 @@ function isMusicProviderName(value: string): value is MusicProviderName {
 }
 
 export function getMusicProvider(): MusicProvider {
-  const providerName = process.env.MUSIC_PROVIDER ?? 'mock';
+  const providerName = process.env.MUSIC_PROVIDER ?? 'musicgen';
 
   if (!isMusicProviderName(providerName)) {
     throw new Error(`Unsupported music provider: ${providerName}`);

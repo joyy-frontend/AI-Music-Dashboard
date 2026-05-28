@@ -33,7 +33,7 @@ function getLoadingLabel(generationType: GenerationKind | null) {
     return 'Creating a variation from the selected result...';
   }
 
-  return 'Generating a new mock track...';
+  return 'Generating a new 30-second track...';
 }
 
 export default function App() {
@@ -178,8 +178,8 @@ export default function App() {
         <p className="eyebrow">AI Music Studio</p>
         <h1>AI Music Generation Dashboard</h1>
         <p className="intro">
-          Turn a short creative prompt into a polished mock track preview for a
-          portfolio-ready music generation workflow.
+          Turn a short creative prompt into a polished 30-second AI music
+          preview with playback, waveform, and live analysis.
         </p>
       </section>
 

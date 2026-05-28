@@ -79,7 +79,7 @@ describe('AI Music Dashboard', () => {
 
     expect(screen.getByText(/composing preview/i)).toBeInTheDocument();
     expect(
-      screen.getAllByText(/generating a new mock track/i).length,
+      screen.getAllByText(/generating a new 30-second track/i).length,
     ).toBeGreaterThan(0);
   });
 
